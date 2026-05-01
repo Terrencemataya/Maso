@@ -1,0 +1,13 @@
+node_modules/
+dist/
+release/
+*.log
+.env
+.DS_Store
+.vscode/
+build/
+out/
+app-builder.exe
+*.exe
+*.zip
+*.tar.gz
