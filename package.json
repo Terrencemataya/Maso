@@ -22,12 +22,14 @@
     "files": [
       "dist/renderer/**/*",
       "electron/**/*",
+      "assets/**/*",
       "package.json"
     ],
     "asarUnpack": [
       "node_modules/ffmpeg-static/**/*"
     ],
     "win": {
+      "icon": "assets/icon.png",
       "target": "nsis"
     }
   },

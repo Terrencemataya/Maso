@@ -30,7 +30,7 @@ export default function TopToolbar() {
     <div className="titlebar">
       {/* Logo */}
       <div className="app-logo">
-        <div className="logo-mark">M</div>
+        <img src="/icon.png" className="logo-img" alt="Maso Logo" />
         <span>Maso</span>
       </div>
 
