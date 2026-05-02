@@ -34,6 +34,11 @@ contextBridge.exposeInMainWorld('maso', {
       ipcRenderer.on(`stream:connected:${id}`, handler)
       return () => ipcRenderer.removeListener(`stream:connected:${id}`, handler)
     },
+    onTelemetry: (id, cb) => {
+      const handler = (_, data) => cb(data)
+      ipcRenderer.on(`stream:telemetry:${id}`, handler)
+      return () => ipcRenderer.removeListener(`stream:telemetry:${id}`, handler)
+    },
   },
 
   // ─── Recording ──────────────────────────────────────────────────

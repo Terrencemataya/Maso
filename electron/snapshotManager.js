@@ -7,6 +7,11 @@ class SnapshotManager {
   }
 
   _resolveFfmpegPath() {
+    try {
+      const ffmpegStatic = require('ffmpeg-static')
+      if (ffmpegStatic) return ffmpegStatic
+    } catch (err) {}
+
     const resourcesPath = process.resourcesPath || path.join(__dirname, '..', 'assets')
     const binaryName = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'
     const bundled = path.join(resourcesPath, 'ffmpeg', binaryName)
@@ -33,6 +38,9 @@ class SnapshotManager {
       }
 
       const args = [
+        '-fflags', 'nobuffer',
+        '-analyzeduration', '0',
+        '-probesize', '32',
         '-rtsp_transport', 'tcp',
         '-i', rtspUrl,
         '-vframes', '1',

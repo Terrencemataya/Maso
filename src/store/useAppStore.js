@@ -90,6 +90,14 @@ const useAppStore = create((set, get) => ({
       },
     })),
 
+  updateStreamTelemetry: (id, telemetry) =>
+    set((s) => ({
+      activeStreams: {
+        ...s.activeStreams,
+        [id]: { ...s.activeStreams[id], telemetry: { ...s.activeStreams[id]?.telemetry, ...telemetry } },
+      },
+    })),
+
   // Grid Slots
   assignStreamToSlot: (slotIndex, streamId) =>
     set((s) => {

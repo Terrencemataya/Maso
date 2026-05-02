@@ -5,6 +5,7 @@
  */
 
 const dgram = require('dgram')
+const crypto = require('crypto')
 
 const WS_DISCOVERY_PROBE = `<?xml version="1.0" encoding="UTF-8"?>
 <e:Envelope xmlns:e="http://www.w3.org/2003/05/soap-envelope"

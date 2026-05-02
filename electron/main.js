@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron')
 const path = require('path')
 const fs = require('fs')
+const crypto = require('crypto')
 
 const { initDatabase, dbGet, dbAll, dbRun } = require('./db')
 const FFmpegManager = require('./ffmpegManager')
@@ -108,6 +109,98 @@ app.whenReady().then(async () => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  // ─── Telemetry Engine ────────────────────────────────────────────────────────
+  const activeStreamsStartTimes = new Map() // streamId -> timestamp
+  const telemetryStates = new Map() // streamId -> state object
+  const MAVLINK_PORT = 14550
+  const dgram = require('dgram')
+  const udpServer = dgram.createSocket('udp4')
+
+  // Handle incoming MAVLink or custom telemetry via UDP
+  udpServer.on('message', (msg, rinfo) => {
+    // Basic MAVLink detection: v1 starts with 0xFE, v2 with 0xFD
+    if (msg[0] === 0xFE || msg[0] === 0xFD) {
+      // In a real app, we'd use a mavlink library here.
+      // For now, we'll just log that we see real data.
+      // And we could try to bind this to a stream based on IP.
+      console.log(`[Telemetry] Received MAVLink packet from ${rinfo.address}`)
+    }
+  })
+
+  try { udpServer.bind(MAVLINK_PORT) } catch (e) { console.error('[Telemetry] UDP Bind failed', e) }
+
+  setInterval(() => {
+    const activeIds = ffmpegManager.getActiveStreams()
+    activeIds.forEach(id => {
+      if (!activeStreamsStartTimes.has(id)) activeStreamsStartTimes.set(id, Date.now())
+      
+      let state = telemetryStates.get(id)
+      if (!state) {
+        state = {
+          lat: 34.0522 + (Math.random() - 0.5) * 0.01,
+          lng: -118.2437 + (Math.random() - 0.5) * 0.01,
+          alt: 100 + Math.random() * 50,
+          heading: Math.floor(Math.random() * 360),
+          battery: 95 + Math.random() * 5,
+          speed: 10 + Math.random() * 10,
+          model: `Drone-${id.slice(0, 4).toUpperCase()}`
+        }
+        telemetryStates.set(id, state)
+      }
+
+      // Update state realistically (smooth movement)
+      const speedMs = state.speed / 3.6 // km/h to m/s roughly
+      const headingRad = (state.heading * Math.PI) / 180
+      state.lat += (Math.cos(headingRad) * speedMs * 0.00001) // 1m is approx 0.00001 degrees
+      state.lng += (Math.sin(headingRad) * speedMs * 0.00001)
+      state.alt += (Math.random() - 0.5) * 0.5
+      state.battery -= 0.01 + Math.random() * 0.02
+      state.heading = (state.heading + (Math.random() - 0.5) * 2 + 360) % 360
+      if (state.battery < 0) state.battery = 0
+
+      mainWindow?.webContents.send(`stream:telemetry:${id}`, {
+        source: "SIMULATED", // Clearly indicate source
+        model: state.model,
+        flightMode: state.battery < 20 ? "RTL" : "POSITION",
+        armed: true,
+        battery: {
+          percentage: Math.round(state.battery),
+          voltage: (14.8 + (state.battery / 100) * 2.1).toFixed(1),
+          current: (8 + Math.random() * 12).toFixed(1),
+        },
+        gps: {
+          lat: state.lat.toFixed(6),
+          lng: state.lng.toFixed(6),
+          satellites: 15,
+          fixType: "3D Lock"
+        },
+        vfr: {
+          altRelative: state.alt.toFixed(1),
+          altMSL: (state.alt + 50).toFixed(1),
+          groundSpeed: state.speed.toFixed(1),
+          climbRate: ((Math.random() - 0.5) * 0.4).toFixed(1),
+          heading: Math.floor(state.heading)
+        },
+        attitude: {
+          pitch: Math.floor((Math.random() - 0.5) * 6),
+          roll: Math.floor((Math.random() - 0.5) * 4),
+          yaw: Math.floor(state.heading)
+        },
+        gimbal: {
+          pitch: -45,
+          yaw: 0,
+          roll: 0
+        },
+        signal: {
+          quality: 98,
+          rssi: -52
+        },
+        flightTime: Math.floor((Date.now() - activeStreamsStartTimes.get(id)) / 1000),
+        timestamp: new Date().toISOString()
+      })
+    })
+  }, 1000) // Update faster (1Hz)
 })
 
 app.on('window-all-closed', () => {

@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import useAppStore from '../store/useAppStore'
 import { useStreamPlayer } from '../hooks/useStreamPlayer'
 import { useStreamStats } from '../hooks/useStreamStats'
+import { useStreamTelemetry } from '../hooks/useStreamTelemetry'
 import { useRecorder } from '../hooks/useRecorder'
 import StatsOverlay from './StatsOverlay'
 import { formatDuration } from '../utils/formatters'
@@ -13,6 +14,25 @@ const MaxIcon   = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="no
 const VolumeIcon= () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
 const PTZIcon   = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
 
+const BatteryIndicator = ({ level = 0, voltage }) => {
+  const getColor = () => {
+    if (level > 50) return 'var(--color-success)'
+    if (level > 20) return 'var(--color-warning)'
+    return 'var(--color-danger)'
+  }
+  return (
+    <div className="battery-indicator" title={`${voltage}V`}>
+      <div className="battery-icon-wrapper" style={{ borderColor: getColor() }}>
+        <div 
+          className="battery-fill" 
+          style={{ width: `${level}%`, background: getColor() }} 
+        />
+      </div>
+      <span style={{ color: getColor() }}>{level}%</span>
+    </div>
+  )
+}
+
 export default function StreamPlayer({ streamId, slotIndex }) {
   const { activeStreams, removeActiveStream, removeStreamFromSlot, settings, openPTZ, notify, streamProfiles } = useAppStore()
   const stream = activeStreams[streamId]
@@ -21,6 +41,9 @@ export default function StreamPlayer({ streamId, slotIndex }) {
   const wsPort = stream?.wsPort
   const { videoRef, status, toggleMute, toggleFullscreen } = useStreamPlayer(streamId, wsPort)
   const { stats } = useStreamStats(streamId)
+  useStreamTelemetry(streamId) // Start listening for telemetry
+  
+  const telemetry = stream?.telemetry
   const { isRecording, elapsed, startRecording, stopRecording } = useRecorder(
     streamId,
     stream?.url || profile?.url,
@@ -72,10 +95,11 @@ export default function StreamPlayer({ streamId, slotIndex }) {
             <span className="stream-name-badge">{displayName}</span>
           </div>
 
-          {/* Stats */}
-          {settings.showStatsOverlay && stats && (
-            <StatsOverlay stats={stats} />
-          )}
+          {/* Stats & Telemetry */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+            {telemetry && <BatteryIndicator level={telemetry.battery.percentage} voltage={telemetry.battery.voltage} />}
+            {settings.showStatsOverlay && stats && <StatsOverlay stats={stats} />}
+          </div>
         </div>
 
         {/* Rec badge */}

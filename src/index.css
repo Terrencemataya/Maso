@@ -295,6 +295,48 @@ a { color: var(--accent); text-decoration: none; }
   color: var(--color-danger);
   animation: pulse 1.5s infinite;
 }
+.battery-indicator {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 600;
+}
+.battery-icon-wrapper {
+  position: relative;
+  width: 16px; height: 10px;
+  border: 1.5px solid var(--text-secondary);
+  border-radius: 2px;
+  padding: 1px;
+}
+.battery-icon-wrapper::after {
+  content: '';
+  position: absolute; right: -3.5px; top: 2px;
+  width: 2px; height: 3.5px;
+  background: currentColor;
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+.telemetry-badge {
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.05em;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+.telemetry-badge.mode-position { color: var(--accent); border-color: var(--border-accent); }
+.telemetry-badge.mode-loiter { color: var(--color-warning); border-color: rgba(245,158,11,0.3); }
+.telemetry-badge.mode-auto { color: var(--accent2); border-color: var(--accent2-dim); }
+.telemetry-badge.status-armed { color: var(--color-danger); border-color: rgba(239,68,68,0.3); animation: pulse 2s infinite; }
+.telemetry-badge.status-disarmed { color: var(--text-muted); }
 
 /* ── Stats Overlay ───────────────────────────────────────────────────────── */
 .stats-overlay {
