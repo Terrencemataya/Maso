@@ -19,8 +19,8 @@ const snapshotManager = new SnapshotManager()
 // ─── Splash Window ────────────────────────────────────────────────────────────
 function createSplashWindow() {
   splashWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 800,
+    height: 520,
     transparent: true,
     frame: false,
     alwaysOnTop: true,
@@ -45,16 +45,25 @@ function createSplashWindow() {
   const splashHtml = `
     <!DOCTYPE html>
     <html>
-      <body style="margin: 0; padding: 0; overflow: hidden; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif;">
-        <div style="position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
-          <img src="${splashImageBase64}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.1);">
-          <div style="position: absolute; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 10px;">
-            <div style="width: 6px; height: 6px; background: #00d4ff; border-radius: 50%; animation: pulse 1s infinite;"></div>
-            <span style="color: white; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Initializing Maso</span>
+      <body style="margin: 0; padding: 0; overflow: hidden; background: transparent; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+        <div style="position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #080c14; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 60px rgba(0,0,0,0.8);">
+          <img src="${splashImageBase64}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; filter: brightness(0.7);">
+          
+          <div style="position: absolute; bottom: 40px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+            <div class="spinner"></div>
+            <span style="color: white; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px; opacity: 0.9; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Initializing Maso Systems</span>
           </div>
         </div>
         <style>
-          @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+          .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-top: 2px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         </style>
       </body>
     </html>
