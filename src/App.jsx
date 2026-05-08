@@ -5,16 +5,18 @@ import Sidebar from './components/Sidebar'
 import StreamGrid from './components/StreamGrid'
 import AddStreamModal from './components/AddStreamModal'
 import RecordingPanel from './components/RecordingPanel'
+import SnapshotsPanel from './components/SnapshotsPanel'
 import DiagnosticsPanel from './components/DiagnosticsPanel'
 import SettingsPanel from './components/SettingsPanel'
 import PTZControls from './components/PTZControls'
 import Notifications from './components/Notifications'
+import LoginPage from './components/LoginPage'
 
 export default function App() {
   const {
     sidebarOpen, activePanel, addStreamModalOpen,
     initGridSlots, setStreamProfiles, setRecordings,
-    notify,
+    notify, isAuthenticated,
   } = useAppStore()
 
   // Initialize on mount
@@ -61,11 +63,21 @@ export default function App() {
   const renderPanel = () => {
     switch (activePanel) {
       case 'recordings':   return <RecordingPanel />
+      case 'snapshots':    return <SnapshotsPanel />
       case 'diagnostics':  return <DiagnosticsPanel />
       case 'settings':     return <SettingsPanel />
       case 'ptz':          return <PTZControls />
       default:             return null
     }
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <LoginPage />
+        <Notifications />
+      </>
+    )
   }
 
   return (

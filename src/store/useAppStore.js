@@ -1,6 +1,10 @@
 import { create } from 'zustand'
 
 const useAppStore = create((set, get) => ({
+  // ─── Authentication ───────────────────────────────────────────────
+  user: null,
+  isAuthenticated: false,
+
   // ─── Stream Profiles (saved in DB) ───────────────────────────────
   streamProfiles: [],
 
@@ -147,6 +151,10 @@ const useAppStore = create((set, get) => ({
   // Settings
   updateSettings: (updates) =>
     set((s) => ({ settings: { ...s.settings, ...updates } })),
+
+  // Auth
+  login: (user) => set({ user, isAuthenticated: true }),
+  logout: () => set({ user: null, isAuthenticated: false }),
 }))
 
 export default useAppStore

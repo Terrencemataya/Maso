@@ -331,6 +331,16 @@ ipcMain.handle('db:streams:delete', (e, { id }) => {
 ipcMain.handle('db:recordings:getAll', () => dbAll('SELECT * FROM recordings ORDER BY started_at DESC'))
 ipcMain.handle('db:snapshots:getAll', () => dbAll('SELECT * FROM snapshots ORDER BY captured_at DESC'))
 
+// ─── Authentication IPC ───────────────────────────────────────────────────────
+ipcMain.handle('auth:login', async (event, { username, password }) => {
+  const user = dbGet('SELECT id, username, role FROM users WHERE username=? AND password=?', [username, password])
+  if (user) {
+    return { success: true, user }
+  } else {
+    return { success: false, error: 'Invalid username or password' }
+  }
+})
+
 // ─── Settings IPC ─────────────────────────────────────────────────────────────
 ipcMain.handle('settings:get', (e, key) => {
   const row = dbGet('SELECT value FROM settings WHERE key=?', [key])

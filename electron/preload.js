@@ -9,6 +9,11 @@ contextBridge.exposeInMainWorld('maso', {
     close: () => ipcRenderer.send('window:close'),
   },
 
+  // ─── Authentication ─────────────────────────────────────────────
+  auth: {
+    login: (creds) => ipcRenderer.invoke('auth:login', creds),
+  },
+
   // ─── Stream Management ──────────────────────────────────────────
   stream: {
     start: (config) => ipcRenderer.invoke('stream:start', config),

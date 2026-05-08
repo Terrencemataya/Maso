@@ -64,6 +64,16 @@ async function initDatabase(userDataPath) {
   `)
 
   db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      username TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      role TEXT DEFAULT 'user',
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+  `)
+
+  db.run(`
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
       value TEXT
@@ -84,6 +94,17 @@ async function initDatabase(userDataPath) {
       'INSERT INTO streams (id, name, url, transport, buffer_mode) VALUES (?, ?, ?, ?, ?)',
       [_uuid(), 'Sample IP Camera', 'rtsp://your-camera-ip:554/stream', 'tcp', 'low_latency']
     )
+  }
+
+  // Seed default admin if no users exist
+  const userCountRes = db.exec('SELECT COUNT(*) as c FROM users')
+  const userCount = userCountRes[0]?.values[0]?.[0] ?? 0
+  if (userCount === 0) {
+    dbRun(
+      'INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, ?)',
+      [_uuid(), 'admin', 'admin123', 'admin']
+    )
+    console.log('[DB] Seeded default admin user')
   }
 
   console.log('[DB] Initialized at', dbPath)
