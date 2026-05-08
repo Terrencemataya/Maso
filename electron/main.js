@@ -49,9 +49,12 @@ function createSplashWindow() {
         <div style="position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #080c14; border-radius: 24px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 60px rgba(0,0,0,0.8);">
           <img src="${splashImageBase64}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; filter: brightness(0.7);">
           
-          <div style="position: absolute; bottom: 40px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+          <div style="position: absolute; bottom: 50px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 20px;">
             <div class="spinner"></div>
-            <span style="color: white; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px; opacity: 0.9; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Initializing Maso Systems</span>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+              <span style="color: white; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 4px; opacity: 0.9; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Initializing Maso Systems</span>
+              <span style="color: #64748b; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8;">Powered by <span style="color: #3b82f6;">Octet Systems</span></span>
+            </div>
           </div>
         </div>
         <style>

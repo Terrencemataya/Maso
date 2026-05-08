@@ -40,6 +40,10 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
+      <button className="login-close-btn" onClick={() => window.maso?.window.close()} title="Close Application">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      
       <div className="login-background">
         <div className="blob blob-1"></div>
         <div className="blob blob-2"></div>
@@ -49,7 +53,7 @@ export default function LoginPage() {
       <div className="login-card">
         <div className="login-header">
           <div className="brand-icon">
-            <Icon.Chip />
+            <img src="/icon.png" alt="Maso Icon" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1>MASO <span>v2.1</span></h1>
           <p>Secure RTSP Monitoring System</p>
@@ -102,6 +106,7 @@ export default function LoginPage() {
             <span>Encrypted Connection</span>
           </div>
           <p>© 2026 Maso Advanced Systems. All rights reserved.</p>
+          <p className="powered-by">Powered by <span>Octet Systems</span></p>
         </div>
       </div>
     </div>
